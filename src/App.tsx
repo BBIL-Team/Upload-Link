@@ -303,7 +303,7 @@ const App: React.FC = () => {
               <input type="file" accept=".csv" onChange={(e) => setSuperStockistFile(e.target.files?.[0] || null)} />
               <button onClick={() => {
                 if (validateFile(superStockistFile)) {
-                  uploadFile(superStockistFile, "https://gmj1qijcmi.execute-api.ap-south-1.amazonaws.com/S1/Anamay_SuperStockist_StockPositions_UploadLink_Dev");
+                  uploadFile(superStockistFile, "https://lfmvm0jt2e.execute-api.ap-south-1.amazonaws.com/V1/Anamay_SuperStockist_StockPositions_UploadLink");
                 }
               }}>
                 Submit SuperStockist File
