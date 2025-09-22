@@ -82,8 +82,7 @@ const App: React.FC = () => {
   };
 
 
-  // Render calendar without status
-   const renderCalendar = (date: Date) => {
+  const renderCalendar = (date: Date) => {
     const daysInMonth = new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
     const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1).getDay();
     const daysArray = [];
@@ -94,13 +93,17 @@ const App: React.FC = () => {
 
     for (let day = 1; day <= daysInMonth; day++) {
       const dateString = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
-      const color = new Date(date.getFullYear(), date.getMonth(), day).getDay() === 0
-        ? "white"
-        : getDateColor(dateString);
+      const isSunday = new Date(date.getFullYear(), date.getMonth(), day).getDay() === 0;
+      const color = isSunday && uploadStatus[dateString] === "#ffffff" ? "white" : getDateColor(dateString);
+      const tooltipText = color === "#9fff80" ? "Stocks and Sales file uploaded" : 
+                         color === "#FFD700" ? "Sales data not updated" : dateString;
 
       daysArray.push(
         <td key={day} className="day" style={{ backgroundColor: color, textAlign: 'center' }}>
-          {day}
+          <div className="tooltip-wrapper">
+            {day}
+            <span className="tooltip">{tooltipText}</span>
+          </div>
         </td>
       );
     }
@@ -117,6 +120,7 @@ const App: React.FC = () => {
     if (week.length > 0) {
       weeks.push(<tr key={`week-${weeks.length}`}>{week}</tr>);
     }
+
     return (
       <table className="calendar-table" style={{ padding: '10px', width: '100%', height: '100%', objectFit: 'cover', objectPosition: '50% 50%' }}>
         <thead>
