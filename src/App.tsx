@@ -10,11 +10,17 @@ const App: React.FC = () => {
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [uploadStatus, setUploadStatus] = useState<{ [key: string]: string }>({});
+  const [uploadStatus, setUploadStatus] = React.useState<{ [key: string]: string }>({});
+  const [yearlyUploadStatus, setYearlyUploadStatus] = React.useState<{ [key: string]: string }>({});
 
   useEffect(() => {
     fetchUploadStatus();
   }, [currentDate]);
 
+   React.useEffect(() => {
+    fetchYearlyUploadStatus();
+  }, [currentYear]);
+  
   const fetchUploadStatus = async () => {
     try {
       const response = await fetch("https://82qww13oi0.execute-api.ap-south-1.amazonaws.com/D2/Anamay_CalenderUpdate_Prod");
@@ -30,6 +36,21 @@ const App: React.FC = () => {
     }
   };
 
+   const fetchYearlyUploadStatus = async () => {
+    try {
+      const response = await fetch("https://evxnr8qxgh.execute-api.ap-south-1.amazonaws.com/T1/Anamay_SuperStockist_Stocks_Tracker");
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Yearly API Response:", data);
+        setYearlyUploadStatus(data);
+      } else {
+        console.error("Failed to fetch yearly upload status, status:", response.status);
+      }
+    } catch (error) {
+      console.error("Error fetching yearly upload status:", error);
+    }
+  };
+
    const getDateColor = (date: string): string => {
     if (uploadStatus[date]) return uploadStatus[date];
     const today = new Date();
@@ -39,6 +60,12 @@ const App: React.FC = () => {
       return "#ffa366";
     }
     return "white";
+  };
+
+  // Modified function to get color for a month based only on Lambda response
+  const getMonthColor = (year: number, month: number): string => {
+    const monthString = `${year}-${(month + 1).toString().padStart(2, '0')}`;
+    return yearlyUploadStatus[monthString] || "white";
   };
   
   // Validate file type
@@ -139,8 +166,49 @@ const App: React.FC = () => {
     );
   };
 
+ const renderYearlyCalendar = () => {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+   const monthRows = [];
+    for (let i = 0; i < months.length; i += 4) {
+      const rowMonths = months.slice(i, i + 4).map((month, index) => {
+        const monthIndex = i + index;
+        const color = getMonthColor(currentYear, monthIndex);
+        return (
+          <div
+            key={month}
+            style={{
+              margin: '10px',
+              width: '100px',
+              textAlign: 'center',
+              backgroundColor: color
+            }}
+          >
+            {month}
+          </div>
+        );
+      });
+      monthRows.push(
+        <div key={`row-${i / 4}`} style={{ display: 'flex', justifyContent: 'space-around', width: '100%' }}>
+          {rowMonths}
+        </div>
+      );
+    }
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        {monthRows}
+      </div>
+    );
+  };
+
   const nextMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() + 1)));
   const prevMonth = () => setCurrentDate(new Date(currentDate.setMonth(currentDate.getMonth() - 1)));
+  const nextYear = () => setCurrentYear(currentYear + 1);
+  const prevYear = () => setCurrentYear(currentYear - 1);
 
     
 
@@ -236,6 +304,44 @@ const App: React.FC = () => {
         </div>
         {renderCalendar(currentDate)}
       </div>
+
+       {/* SuperStockist and Yearly Calendar Box */}
+        <div style={{
+          width: '90vw',
+          padding: '20px',
+          backgroundColor: '#f0f0f0',
+          borderRadius: '8px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+        }}>
+          <div style={{ width: '50%',paddingTop:'70px' }}>
+            <h2>SuperStockist Stock Positions</h2>
+            <div style={{ padding: '10px', backgroundColor: '#e6e6e6', borderRadius: '8px' }}>
+              <input type="file" accept=".csv" onChange={(e) => setSuperStockistFile(e.target.files?.[0] || null)} />
+              <button onClick={() => {
+                if (validateFile(superStockistFile)) {
+                  uploadFile(superStockistFile, "https://gmj1qijcmi.execute-api.ap-south-1.amazonaws.com/S1/Anamay_SuperStockist_StockPositions_UploadLink_Dev");
+                }
+              }}>
+                Submit SuperStockist File
+              </button>
+            </div>
+          </div>
+
+          <div style={{ width: '40%', padding: '0px',backgroundColor: 'rgb(230,247,255)' }}>
+            <h3 style={{ textAlign: 'center' }}>Calendar (Yearly Tracker)</h3>
+            <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+              <button onClick={prevYear}>&lt;</button>
+              <span style={{ margin: '0 10px' }}>{currentYear}</span>
+              <button onClick={nextYear}>&gt;</button>
+            </div>
+            {renderYearlyCalendar()}
+          </div>
+        </div>
+
+        {responseMessage && <p>{responseMessage}</p>}
 
 
       {/* Modal Popup */}
