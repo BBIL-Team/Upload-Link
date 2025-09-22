@@ -6,10 +6,11 @@ const App: React.FC = () => {
   const { signOut } = useAuthenticator();
   const [stocksFile, setStocksFile] = useState<File | null>(null);
   const [salesFile, setSalesFile] = useState<File | null>(null);
+  const [superStockistFile, setSuperStockistFile] = React.useState<File | null>(null);
   const [responseMessage, setResponseMessage] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
+  const [currentYear, setCurrentYear] = React.useState<number>(new Date().getFullYear());
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [uploadStatus, setUploadStatus] = useState<{ [key: string]: string }>({});
   const [uploadStatus, setUploadStatus] = React.useState<{ [key: string]: string }>({});
   const [yearlyUploadStatus, setYearlyUploadStatus] = React.useState<{ [key: string]: string }>({});
 
