@@ -252,7 +252,7 @@ const App: React.FC = () => {
               <input type="file" accept=".csv" onChange={(e) => setStocksFile(e.target.files?.[0] || null)} />
               <button onClick={() => {
                 if (validateFile(stocksFile)) {
-                  uploadFile(stocksFile, "https://ty1d56bgkb.execute-api.ap-south-1.amazonaws.com/S1/Anamay_Stocks_UploadLink_Dev");
+                  uploadFile(stocksFile, "https://qvls5frwcc.execute-api.ap-south-1.amazonaws.com/V1/UploadLink_Anamay");
                 }
               }}>
                 Submit Stocks File
@@ -264,7 +264,7 @@ const App: React.FC = () => {
               <input type="file" accept=".csv" onChange={(e) => setSalesFile(e.target.files?.[0] || null)} />
               <button onClick={() => {
                 if (validateFile(salesFile)) {
-                  uploadFile(salesFile, "https://yu8yamaj62.execute-api.ap-south-1.amazonaws.com/S1/Anamay_Sales_UploadLink_Dev");
+                  uploadFile(salesFile, "https://azjfhu323b.execute-api.ap-south-1.amazonaws.com/S1/UploadLinkAnamay_Sales");
                 }
               }}>
                 Submit Sales File
